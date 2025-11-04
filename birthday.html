@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>For Tsuki Hikari 🌙</title>
+  <style>
+    /* Basic reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+
+    /* Background and main layout */
+    body{
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,64,129,0.07), transparent 10%),
+        linear-gradient(180deg,#0b0010 0%, #22001f 45%, #2b001f 100%);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      padding:28px;
+    }
+
+    .container{
+      width:95vw;
+      max-width:980px;
+      min-height:640px;
+      border-radius:18px;
+      position:relative;
+      overflow:hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      display:grid;
+      grid-template-columns:1fr 420px;
+      gap:22px;
+      align-items:center;
+      padding:28px;
+    }
+    @media (max-width:960px){
+      .container{grid-template-columns:1fr; padding:20px}
+    }
+
+    /* Pumpkin SVG background wrapper (behind everything) */
+    .pumpkin-bg{
+      position:absolute;
+      inset:0;
+      z-index:-3;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .pumpkin-large{
+      position:absolute;
+      width:60vmin;
+      max-width:900px;
+      opacity:0.16;
+      filter: blur(6px) drop-shadow(0 0 24px rgba(255,120,0,0.18));
+      transform-origin:center;
+      animation: pumpkinPulse 10s ease-in-out infinite;
+    }
+    .pumpkin-large.left{ left:-12%; top:6%; transform: rotate(-6deg) scale(0.95); }
+    .pumpkin-large.right{ right:-6%; bottom:-8%; transform: rotate(10deg) scale(1.05); opacity:0.14; animation-delay:3s }
+
+    @keyframes pumpkinPulse{
+      0%{ transform: scale(0.96) rotate(-2deg); opacity:.12 }
+      50%{ transform: scale(1.06) rotate(2deg); opacity:.22 }
+      100%{ transform: scale(0.98) rotate(-2deg); opacity:.12 }
+    }
+
+    /* Pink mist overlay for color */
+    .mist{
+      position:absolute; inset:0; z-index:-2; pointer-events:none;
+      background: radial-gradient(ellipse at 20% 25%, rgba(255,20,147,0.06), transparent 10%),
+                  radial-gradient(ellipse at 80% 80%, rgba(255,182,193,0.03), transparent 12%);
+      mix-blend-mode: screen;
+    }
+
+    /* Left side content */
+    .left{
+      padding:8px 18px;
+      z-index:2;
+    }
+    h1{
+      color:#ff99c2;
+      font-size:32px;
+      margin-bottom:8px;
+      text-shadow: 0 6px 22px rgba(255,80,150,0.06);
+    }
+    .subtitle{
+      color: #ffdfe9;
+      opacity:0.9;
+      margin-bottom:18px;
+    }
+
+    /* Controls */
+    .controls{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+    .btn{
+      background:linear-gradient(90deg,#ff4f8a,#ff79b5);
+      border:0;color:#fff;padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 12px 30px rgba(255,80,150,0.12)
+    }
+    .btn.secondary{ background:transparent;border:1px solid rgba(255,255,255,0.06); color:#ffdfe9;padding:10px 14px;font-weight:600 }
+
+    /* Hidden message + photo area */
+    #surprise{
+      display:none;
+      margin-top:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+      padding:18px;border-radius:14px;backdrop-filter: blur(6px);
+      box-shadow:0 12px 30px rgba(0,0,0,0.45);
+      color:#fffafc; line-height:1.6;
+      text-align:left;
+      max-width:720px;
+    }
+    #surprise p{ margin-bottom:12px; font-size:1.05rem }
+
+    /* Right side portrait */
+    .right{display:flex;flex-direction:column;align-items:center;gap:12px;z-index:2}
+    .portrait{
+      width:360px;height:360px;border-radius:18px;overflow:hidden;position:relative;background:#0b0010;border:1px solid rgba(255,255,255,0.03);
+      display:flex;align-items:center;justify-content:center;box-shadow:0 16px 44px rgba(0,0,0,0.6);
+    }
+    .portrait img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.98) saturate(1.03);transform:scale(0.99);transition:transform 900ms ease, filter 900ms ease;opacity:0}
+    .portrait.show img{ opacity:1; transform:scale(1.03) }
+
+    /* floating hearts */
+    .heart{position:absolute;font-size:20px;pointer-events:none;color:#ff8fb8;animation:rise 6s linear forwards}
+    @keyframes rise{0%{transform:translateY(0) scale(0.9);opacity:1}100%{transform:translateY(-72vh) scale(1.3);opacity:0}}
+
+    /* Footer with glowing nickname */
+    footer{
+      position:absolute;left:0;right:0;bottom:8px;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none;
+    }
+    .footer-text{
+      color:#ffd6ea; font-size:14px; padding:6px 14px; border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,105,180,0.06), rgba(255,182,193,0.03)); box-shadow: 0 6px 24px rgba(255,60,140,0.06);
+      text-shadow:0 4px 18px rgba(255,105,180,0.08);
+    }
+
+    /* small utility */
+    .small{font-size:13px;color:rgba(255,255,255,0.75);margin-top:6px}
+  </style>
+</head>
+<body>
+  <!-- Pumpkin SVGs placed behind everything -->
+  <div class="pumpkin-bg" aria-hidden="true">
+    <!-- Left big pumpkin (inline SVG) -->
+    <svg class="pumpkin-large left" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="g1" cx="30%" cy="30%">
+          <stop offset="0" stop-color="#ffd2a8"/>
+          <stop offset="1" stop-color="#ff6b00"/>
+        </radialGradient>
+        <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="18" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g filter="url(#glow1)">
+        <ellipse cx="300" cy="340" rx="220" ry="180" fill="url(#g1)"/>
+        <ellipse cx="270" cy="260" rx="160" ry="140" fill="#ff9a3a" opacity="0.98"/>
+        <!-- face -->
+        <path d="M210 290 L250 240 L290 290 Z" fill="#2a0015"/>
+        <path d="M360 290 L395 240 L440 290 Z" fill="#2a0015"/>
+        <path d="M260 360 C300 410 340 410 380 360 Q320 420 260 360 Z" fill="#2a0015"/>
+      </g>
+    </svg>
+
+    <!-- Right big pumpkin (inline SVG) -->
+    <svg class="pumpkin-large right" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="g2" cx="70%" cy="70%">
+          <stop offset="0" stop-color="#ffd9b3"/>
+          <stop offset="1" stop-color="#ff8b2b"/>
+        </radialGradient>
+        <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="20" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g filter="url(#glow2)">
+        <ellipse cx="300" cy="320" rx="240" ry="200" fill="url(#g2)"/>
+        <ellipse cx="330" cy="250" rx="170" ry="140" fill="#ff984b" opacity="0.97"/>
+        <!-- face -->
+        <path d="M220 300 L270 250 L310 300 Z" fill="#1a0018"/>
+        <path d="M360 300 L410 250 L455 300 Z" fill="#1a0018"/>
+        <path d="M260 370 C310 430 350 430 400 370 Q330 430 260 370 Z" fill="#1a0018"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="mist" aria-hidden="true"></div>
+
+  <div class="container" role="main" aria-live="polite">
+    <div class="left">
+      <h1>Happy Birthday, Angel 🎂🖤</h1>
+      <div class="subtitle">A little Scorpio-mystery — soft light, quiet power, and a playful surprise.</div>
+
+      <div class="controls">
+        <button id="openBtn" class="btn" aria-controls="surprise">Open Your Surprise 💌</button>
+        <button id="heartsToggle" class="btn secondary" title="Toggle floating hearts">Toggle Hearts</button>
+      </div>
+
+      <div id="surprise" aria-hidden="true">
+        <p>
+          The night holds a gentle hush, the kind that makes small things glow —  
+          a lantern, a laugh, a moment that fits perfectly. ✨<br><br>
+          Scorpio nights carry a hush of secrets and strength —  
+          steady, curious, quietly impossible to forget.<br><br>
+          This little place is yours for the evening. Enjoy the music, the lights, and the quiet mischief. 🎃
+        </p>
+
+        <!-- photo -->
+        <img id="portrait" src="1000029789.jpg" alt="Angel (Tsuki Hikari)" width="360" height="360">
+        <div class="small">Music will start when you open the surprise.</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="portrait" role="img" aria-label="Angel's portrait">
+        <!-- the photo is shown inside #surprise; this right-side portrait area keeps layout balance and can glow when visible -->
+        <img id="sidePortrait" src="1000029789.jpg" alt="Angel's portrait (Tsuki Hikari)">
+      </div>
+      <div class="small">Dark pink nights • Pumpkin glow • Scorpio whispers</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-text" aria-hidden="true">For Tsuki Hikari 🌙</div>
+  </footer>
+
+  <!-- audio (local file you already have in same folder) -->
+  <audio id="audio" preload="metadata">
+    <source src="The Neighbourhood - Sweater Weather (Official Video).mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Elements
+    const openBtn = document.getElementById('openBtn');
+    const surprise = document.getElementById('surprise');
+    const portrait = document.getElementById('portrait');
+    const sidePortrait = document.getElementById('sidePortrait');
+    const audio = document.getElementById('audio');
+    const heartsToggle = document.getElementById('heartsToggle');
+
+    // show/hide hearts continuous interval handle
+    let heartsInterval = null;
+
+    // pre-prepare audio: ensure metadata loaded so we can jump time later
+    // but do not autoplay - we'll jump and play on click
+    audio.addEventListener('error', (e) => {
+      console.warn('Audio error (is the mp3 file in the same folder with exact filename?):', e);
+    });
+
+    // Click to open surprise -> reveal message, reveal portrait, start music at 5s, spawn hearts
+    openBtn.addEventListener('click', async () => {
+      // hide button and reveal the surprise
+      openBtn.style.display = 'none';
+      surprise.style.display = 'block';
+      surprise.setAttribute('aria-hidden','false');
+
+      // show portrait(s) with gentle reveal
+      portrait.style.display = 'block';
+      sidePortrait.style.opacity = 1;
+      document.querySelector('.portrait').classList.add('show');
+
+      // try to start audio at 5 seconds in (skip intro)
+      try {
+        // if metadata already available, set currentTime immediately
+        if (audio.readyState > 0) {
+          audio.currentTime = 5;
+          await audio.play();
+        } else {
+          // wait until metadata loads, then set time and play
+          audio.addEventListener('loadedmetadata', async function onMeta() {
+            try { audio.currentTime = 5; } catch(e) { /* some browsers may throw if not allowed */ }
+            try { await audio.play(); } catch(e){ console.warn('Play blocked', e); }
+            audio.removeEventListener('loadedmetadata', onMeta);
+          });
+          // ensure loading starts
+          audio.load();
+        }
+      } catch (err) {
+        console.warn('Audio could not be started programmatically:', err);
+        // as fallback, show a small play button
+        showAudioFallback();
+      }
+
+      // spawn a burst of hearts
+      spawnHearts(16);
+    });
+
+    // fallback to show small manual play control if browser blocks audio
+    function showAudioFallback(){
+      if (document.getElementById('audioPlayFallback')) return;
+      const f = document.createElement('button');
+      f.id = 'audioPlayFallback';
+      f.textContent = 'Play Song';
+      f.style.marginLeft = '12px';
+      f.className = 'btn';
+      openBtn.insertAdjacentElement('afterend', f);
+      f.addEventListener('click', async () => {
+        try {
+          audio.currentTime = 5;
+        } catch(e){}
+        await audio.play();
+        f.remove();
+      });
+    }
+
+    // function to spawn floating hearts continuously or a burst
+    function spawnHearts(count=1){
+      for (let i=0;i<count;i++){
+        setTimeout(() => createHeart(), i*120);
+      }
+    }
+
+    function createHeart(){
+      const d = document.createElement('div');
+      d.className = 'heart';
+      d.textContent = '💖';
+      // random left position across the screen
+      d.style.left = (5 + Math.random()*90) + 'vw';
+      d.style.bottom = '-40px';
+      d.style.fontSize = (14 + Math.random()*28) + 'px';
+      d.style.opacity = (0.6 + Math.random()*0.4);
+      d.style.animationDuration = (5 + Math.random()*4) + 's';
+      document.body.appendChild(d);
+      setTimeout(()=> d.remove(), 9000);
+    }
+
+    // toggle continuous hearts
+    heartsToggle.addEventListener('click', () => {
+      if (heartsInterval) {
+        clearInterval(heartsInterval);
+        heartsInterval = null;
+        heartsToggle.textContent = 'Toggle Hearts';
+      } else {
+        heartsInterval = setInterval(()=> createHeart(), 650);
+        heartsToggle.textContent = 'Stop Hearts';
+      }
+    });
+
+    // Accessibility: allow Enter key to trigger open
+    openBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter') openBtn.click(); });
+
+    // If portrait image fails to load, show helpful alt text
+    portrait.addEventListener('error', () => {
+      portrait.style.display = 'block';
+      portrait.alt = "Photo missing; please place '1000029789.jpg' in the same folder as this HTML file";
+      portrait.style.background = 'linear-gradient(135deg, rgba(255,182,193,0.06), rgba(150,100,200,0.04))';
+      portrait.style.objectFit = 'contain';
+    });
+    sidePortrait.addEventListener('error', () => {
+      sidePortrait.style.opacity = 1;
+      sidePortrait.alt = "Photo missing; please place '1000029789.jpg' in the same folder";
+      sidePortrait.src = '';
+      sidePortrait.style.background = 'linear-gradient(135deg, rgba(255,182,193,0.06), rgba(150,100,200,0.04))';
+    });
+  </script>
+</body>
+</html>
